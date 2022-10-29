@@ -2,7 +2,8 @@ from bson import ObjectId
 from db import setup_db
 from aiohttp import web
 import asyncio
-import  re
+import re
+
 
 async def short_url_get(request):
     form_request = """<form action="/" method="POST">
@@ -22,10 +23,10 @@ async def short_url_get(request):
 async def short_url_post(request):
     result = await request.text()
     user_url = result.replace('user_url=', '')
-    user_url_list = user_url.split('://')
+    user_url_list = re.split(r'%.[A-Z*]', user_url)
     db = request.app["db"]
     collection = db['shortener']
-    url_record = await collection.insert_one({'user_url': user_url_list[1], 'prefix': user_url_list[0]})
+    url_record = await collection.insert_one({'user_url': user_url_list[-1], 'prefix': user_url_list[0]})
     return web.Response(text=str(url_record.inserted_id))
 
 
