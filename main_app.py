@@ -2,7 +2,7 @@ from bson import ObjectId
 from db import setup_db
 from aiohttp import web
 import asyncio
-
+import  re
 
 async def short_url_get(request):
     form_request = """<form action="/" method="POST">
@@ -35,7 +35,7 @@ async def handler(request):
     collection = db['shortener']
     obj_url = await collection.find_one({'_id': ObjectId(name_url)})
     prefix = obj_url.get("prefix", 'http')
-    url = obj_url.get['user_url']
+    url = obj_url.get('user_url')
     return web.HTTPFound(prefix + '://' + url)
 
 
